@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../scss/dualSelector.scss';
+import React, { useEffect, useRef } from "react";
+import "../scss/dualSelector.scss";
 
 const DualSelector = ({
   title,
   optionsArr,
+  unitMoveChecked,
   selectedArr,
   setSelectedArr,
   saveArr,
@@ -28,24 +29,24 @@ const DualSelector = ({
     const res = saveArr.filter(({ name }) => {
       return name.includes(target.value);
     });
-    console.log(res);
     onChangeSearch(res);
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', onBlurHandler);
+    document.addEventListener("mousedown", onBlurHandler);
     return () => {
-      document.removeEventListener('mousedown', onBlurHandler);
+      document.removeEventListener("mousedown", onBlurHandler);
     };
   }, []);
 
   useEffect(() => {
-    console.log(screenSizeInput);
     wrapperRef.current.style.width = `${screenSizeInput[0]}px`;
     wrapperRef.current.style.height = `${screenSizeInput[1]}px`;
   }, [screenSizeInput]);
 
   const ctrlClick = (idx) => {
+    //setting 하나씩만옮기기
+    if (unitMoveChecked) return;
     // 이미 클릭 되어있는 item을 클릭할 때
     if (selectedArr.includes(idx)) {
       const selected = selectedArr.filter((item) => idx !== item);
@@ -59,6 +60,9 @@ const DualSelector = ({
   };
 
   const shiftClick = (idx) => {
+    //setting 하나씩만옮기기
+    if (unitMoveChecked) return;
+
     const selected = [];
     const len = selectedArr.length;
     // 클릭된게 없으면 0번 부터 있으면 가장 처음 클릭 된 것
@@ -78,7 +82,6 @@ const DualSelector = ({
     }
     setSelectedArr(selected);
   };
-
   const normalClick = (idx) => {
     if (selectedArr.includes(idx)) {
       const selected = selectedArr.filter((item) => item !== idx);
@@ -89,7 +92,6 @@ const DualSelector = ({
   };
 
   const onClickHandler = (e, idx) => {
-    console.log(selectedArr);
     // ctrl 또는 command를 누르고 클릭 했을 때
     if (e.ctrlKey || e.metaKey) {
       ctrlClick(idx);
@@ -106,9 +108,9 @@ const DualSelector = ({
 
   const onBlurHandler = (e) => {
     if (
-      e.target.tagName !== 'SPAN' &&
-      e.target.tagName !== 'LI' &&
-      e.target.tagName !== 'BUTTON'
+      e.target.tagName !== "SPAN" &&
+      e.target.tagName !== "LI" &&
+      e.target.tagName !== "svg"
     ) {
       setSelectedArr([]);
     }
@@ -119,7 +121,7 @@ const DualSelector = ({
       <input
         type="text"
         onChange={searchValue}
-        disabled={searchChecked ? true : false}
+        disabled={searchChecked ? false : true}
         className="search-input"
         placeholder="search"
       />
@@ -132,8 +134,8 @@ const DualSelector = ({
                 key={idx}
                 className={
                   selectedArr.includes(idx)
-                    ? 'stop-dragging gray'
-                    : 'stop-dragging white'
+                    ? "stop-dragging gray"
+                    : "stop-dragging white"
                 }
                 onClick={(e) => onClickHandler(e, idx)}
                 onDragStart={(e) => onDragStart(e, idx, id)}
@@ -150,7 +152,7 @@ const DualSelector = ({
           })}
         </ul>
         <div
-          className={selectedCheck ? 'selected-count' : 'selected-count-hidden'}
+          className={selectedCheck ? "selected-count" : "selected-count hidden"}
         >
           <p>
             {selectedArr.length} / {optionsArr.length}
