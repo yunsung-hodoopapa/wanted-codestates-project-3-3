@@ -76,7 +76,6 @@ const DualSelector = ({
         selected.push(sel);
       }
     }
-
     setSelectedArr(selected);
   };
 
